@@ -1,0 +1,27 @@
+<div class="main-page__window">
+  <div style="display: flex; flex-direction: row; justify-content: space-around">
+    <div style="width: 80px; height: 16px">
+      <button
+        (click)="onPrev()"
+        [disabled]="disablePageButtons"
+        style="height: 100%; width: 100%">
+        < Prev
+      </button>
+
+    </div>
+    {{index}}
+    <div
+      style="width: 80px; height: 16px">
+      <button
+        (click)="onNext()"
+        [disabled]="disablePageButtons"
+        style="height: 100%; width: 100%">
+        Next >
+      </button>
+
+    </div>
+
+  </div>
+<div id="cy" style="width: 100%; height: 100%;">
+</div>
+</div>

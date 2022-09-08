@@ -1,0 +1,22 @@
+.app {
+  &__window {
+    border: 1px solid black;
+    width: 100vw;
+    height: 100vh;
+  }
+  &__content-container {
+    width: 100%;
+    height: 90%;
+    display: flex;
+    flex-direction: row;
+  }
+  &__main-page {
+    width: 75%;
+    height: 90%;
+  }
+  &__sidebar {
+    width: 25%;
+    height: 100%;
+  }
+}
+

@@ -1,0 +1,93 @@
+<div class="topbar__window">
+  <div class="topbar__form">
+
+    <div class="topbar__file-input">
+      <div style="display: flex; flex-direction: column">
+        <label style="margin-bottom: 6px; margin-top: 6px;">
+          Input node file
+        </label>
+          <input
+            #nodeUpload
+            (change)="onNodeSelected($event)"
+            accept="text/txt"
+            type="file"
+          >
+      </div>
+      <div style="display: flex; flex-direction: column">
+        <label style="margin-bottom: 10px">
+          Input edge File
+        </label>
+        <input
+          #edgeUpload
+          (change)="onEdgeSelected($event)"
+          accept="text/txt"
+          type="file"
+        >
+      </div>
+      <div style="display: flex; flex-direction: column">
+        <label style="margin-bottom: 10px">
+          Input plant File
+        </label>
+        <input
+          #plantUpload
+          (change)="onPlantSelected($event)"
+          accept="text/txt"
+          type="file"
+        >
+      </div>
+    </div>
+    <form
+      [formGroup]="_formGroup"
+      class="topbar__config">
+      <div style="display: flex; flex-direction: column">
+        <label class="topbar__label">
+          Choose calculation mode.
+          Simple - all power plants are working constantly
+          Binary - power plants can be switched off
+          Complex - binary mode plus ramp in energy generation
+        </label>
+        <select
+          formControlName="mode"
+          class="topbar__select">
+          <option>
+            simple
+          </option>
+          <option>
+            binary
+          </option>
+          <option>
+            complex
+          </option>
+        </select>
+      <label class="topbar__label">
+        Enforce strict energy flow rules or allow for shortages in nodes ( used when model is infeasible)
+      </label>
+      <select
+        formControlName="enforce"
+        class="topbar__select">
+        <option>
+          True
+        </option>
+        <option>
+          False
+        </option>
+      </select>
+      <label class="topbar__label">
+        How many 1-hour cycle you want to run (max 24)
+      </label>
+      <input
+        formControlName="length"
+        type="number" style="width: 80px; height: 16px">
+      </div>
+    </form>
+    <div style="justify-content: center; display: flex; flex-direction: column">
+      <button
+        (click)="send()"
+        [disabled]="!enable"
+        style="width: 120px; height: 24px"
+      >
+        {{resultButtonText}}
+      </button>
+    </div>
+  </div>
+</div>

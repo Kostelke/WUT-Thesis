@@ -1,0 +1,3 @@
+Anode  0
+Bnode  0 
+Cnode  70

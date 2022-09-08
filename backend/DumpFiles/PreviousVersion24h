@@ -1,0 +1,173 @@
+   
+
+
+
+
+
+def main():
+
+    nodes = loadNode("Demand.txt")
+    edges = loadEdges("Lines.txt")
+    loadPlants(nodes, "PowerPlants.txt")
+
+
+    solver = pywraplp.Solver.CreateSolver('SCIP')
+
+    #Create Variables - pj, Pab, 0a - phase
+    periodOfTime = []
+    time = 0
+    while time < 3 :
+
+        plantsInNodes = []
+        edgeFlowVariables = []
+        phaseVariable = []
+        
+
+        # for node in nodes:
+        #     solverNode = {
+        #         "nodeName" : node["nodeName"],
+        #         "demand" : node["demand"] * _globalDemand[time],
+        #         "plants" : [],
+        #         "isPlantWorking" : [] # binary variable, same size as plants, defines if block is working
+        #     }
+        #     if len(node["plants"]) != 0:
+        #         for plant in node["plants"]:
+        #             solverNode["plants"].append(
+        #                 solver.NumVar(0, plant["Pmax"], plant["plantName"]+"_"+plant["blockName"])
+        #             )
+        #             solverNode["isPlantWorking"].append(
+        #                 solver.BoolVar(plant["blockName"] +  " Is working: ")
+        #             )
+        #     else :
+        #         solverNode["plants"].append(
+        #             solver.NumVar(0, 0, node["nodeName"])
+        #         )
+        #         solverNode["isPlantWorking"].append(
+        #             solver.BoolVar( node["nodeName"] + " Is not working")
+        #         )
+        #     plantsInNodes.append(solverNode)
+        #     maxPhase = math.pi
+        #     phaseVariable.append(
+        #         solver.NumVar(-maxPhase, maxPhase, node["nodeName"])
+        #     )
+        
+
+        # for nodeA in nodes:
+        #     flowAB = []
+        #     for nodeB in nodes:
+        #         flag = isNeighbour(nodeA["nodeName"], nodeB["nodeName"], edges)
+        #         if flag != -1:
+        #             edgeDataObject = {
+        #                 "srcNodeVolt" : getSourceVoltage(nodeA, nodeB, flag),
+        #                 "dstNodeVolt" : getSourceVoltage(nodeB, nodeA, flag),
+        #                 "var" : solver.NumVar(-flag["capacity"], flag["capacity"], nodeA["nodeName"]+nodeB["nodeName"])
+        #             }
+        #             flowAB.append(edgeDataObject)
+        #         if flag == -1: 
+        #             flowAB.append(0)
+        #     edgeFlowVariables.append(flowAB)
+
+        # Create constraint - flow into and from node, flow on edge and phase on first node
+    
+        # for nodeA in nodes:
+        #     neighbouringEdges = []
+        #     for nodeB in nodes:
+        #         edgeToConstrain = isNeighbour(nodeA["nodeName"], nodeB["nodeName"], edges)
+        #         if edgeToConstrain != -1 :
+        #             edgeFlowDataObject = edgeFlowVariables[nodeA["index"]][nodeB["index"]]
+        #             neighbouringEdges.append(edgeFlowDataObject["var"])
+        #             solver.Add(
+        #                 edgeFlowDataObject["var"] == edgeFlowDataObject["srcNodeVolt"] * edgeFlowDataObject["dstNodeVolt"]*edgeToConstrain["admitance"]*(
+        #                     phaseVariable[nodeA["index"]]- phaseVariable[nodeB["index"]]
+        #                     )
+        #             )
+        #     index = 0
+        #     for plant in plantsInNodes[nodeA["index"]]["plants"]:
+        #         if len(nodes[nodeA["index"]]["plants"]) > 0:
+        #             solver.Add(
+        #                 plant <= plantsInNodes[nodeA["index"]]["isPlantWorking"][index]*nodes[nodeA["index"]]["plants"][index]["Pmax"]
+        #             )
+        #             solver.Add(
+        #                 plant >= plantsInNodes[nodeA["index"]]["isPlantWorking"][index]*nodes[nodeA["index"]]["plants"][index]["Pmin"]
+        #             )
+        #             if time > 0:
+        #                 solver.Add(
+        #                     periodOfTime[time - 1][nodeA["index"]]["plants"][index] - plant <= 0.3* (
+        #                         nodes[nodeA["index"]]["plants"][index]["Pmax"]
+        #                     )
+        #                 )
+        #                 solver.Add(
+        #                     periodOfTime[time - 1][nodeA["index"]]["plants"][index] - plant >= -0.3* (
+        #                         nodes[nodeA["index"]]["plants"][index]["Pmax"]
+        #                     )
+        #                 )
+        #             index = index + 1
+        #     solver.Add(
+        #         sum(plantsInNodes[nodeA["index"]]["plants"]) - nodeA["demand"]*_globalDemand[time] - sum(neighbouringEdges)==0
+        #     )
+        
+        # periodOfTime.append(plantsInNodes)
+        time +=1    
+
+
+    # sumOfGeneration = []
+    # for hour in periodOfTime:
+    #     for node in hour :
+    #         for plant in node["plants"]:
+    #             sumOfGeneration.append(plant)
+
+    solver.Minimize(sum(sumOfGeneration))
+    status = solver.Solve()
+
+   
+    print('Solution:')
+    print('Objective value =', solver.Objective().Value())
+    print('\nAdvanced usage:')
+    suma = 0
+    for d in periodOfTime:
+        for node in d:
+            for plant in node["plants"]:
+                suma = suma + plant.solution_value()
+ 
+    
+    # mathDifference = []
+    # i = 0
+    # for node in nodes:
+    #     pindex = 0
+    #     if len(node["plants"]) > 0 :
+    #         for plant in node["plants"]:
+    #             if difference[0][i][pindex] - difference[1][i][pindex] > plant["Pmax"]* 0.4:
+    #                 mathDifference.append("Error")
+    #             if difference[0][i][pindex] - difference[1][i][pindex] < -plant["Pmax"]* 0.4:
+    #                  mathDifference.append("Error")
+    #             if difference[1][i][pindex] - difference[2][i][pindex] > plant["Pmax"]* 0.4:
+    #                 mathDifference.append("Error")
+    #             if difference[1][i][pindex] - difference[2][i][pindex] < -plant["Pmax"]* 0.4:
+    #                  mathDifference.append("Error")
+    #             pindex +=1
+    #     i +=1
+
+    # print(mathDifference)
+    # print( "len is ")
+    # print(len(mathDifference))
+                
+    print(" sum of energy = ")
+    print(suma)
+    print("\n Aiming for: ")
+    t = 0
+    cel = 0
+    while t < time :
+        cel = cel + _globalDemand[t]
+        t+=1
+    print(cel)
+    print('Problem solved in %f milliseconds' % solver.wall_time())
+    print('Problem solved in %d iterations' % solver.iterations())
+    print('Problem solved in %d branch-and-bound nodes' % solver.nodes())
+
+
+
+if __name__ == '__main__':
+    main()
+
+
+
